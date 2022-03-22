@@ -13,7 +13,9 @@
       </nav>
       <label class="theme-switch">
         <input id="checkbox" type="checkbox" />
-        <span id="click"><ion-icon name="bulb-outline"></ion-icon></span>
+        <span id="click">
+          <ion-icon name="bulb-outline"></ion-icon>
+        </span>
       </label>
     </div>
     <div class="search">
@@ -31,8 +33,8 @@
       <p class="search__fail"></p>
     </div>
     <div class="library visually-hidden" id="libraryBtn">
-      <a href="#" class="library__btn watched__link is-active">Watched</a>
-      <a href="#" class="library__btn queue__link">Queue</a>
+      <a href="#" class="library__btn watched__link" data-watched-btn>Watched</a>
+      <a href="#" class="library__btn queue__link" data-queue-btn>Queue</a>
     </div>
   </div>
 </header>

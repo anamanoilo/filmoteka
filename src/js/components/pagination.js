@@ -1,5 +1,5 @@
 import api from '../services/ApiService';
-import { onLoading } from '../services/movieList';
+import { onLoading, makeMovieList } from '../services/movieList';
 import { loadMoviesByKeyWord, inputValue } from '../services/search';
 import * as storage from '../services/localStorage';
 
@@ -18,18 +18,41 @@ refs.nextBtn.addEventListener('click', nextPageBtn);
 let listFirstPage = 1;
 let totalPages = storage.get('totalPages');
 let markup = '';
+let itemsPerPage = 20;
+
+function isActive(selector) {
+  const element = document.querySelector(selector);
+  if (element) {
+    return element.classList.contains('is-active');
+  }
+  return;
+}
+
+function getItems(element) {
+  const queueItems = storage.get(element);
+  let start = (api.page - 1) * itemsPerPage;
+  let end = start + itemsPerPage;
+  let items = queueItems.slice(start, end);
+  makeMovieList(items);
+}
+
+async function checkLocation() {
+  if (isActive('[data-watched-btn]')) {
+    getItems('watched');
+  } else if (isActive('[data-queue-btn]')) {
+    getItems('queue');
+  } else if (inputValue) {
+    await loadMoviesByKeyWord();
+  } else {
+    await onLoading();
+  }
+}
 
 async function nextPageBtn() {
   api.page += 1;
   isLastPage();
   isFirstPage();
-
-  if (inputValue) {
-    await loadMoviesByKeyWord();
-  } else {
-    await onLoading();
-  }
-
+  await checkLocation();
   scrollToTop();
 
   const nextPagination = totalPages - api.page;
@@ -79,13 +102,7 @@ async function prevPageBtn() {
   api.page -= 1;
   isFirstPage();
   isLastPage();
-
-  if (inputValue) {
-    await loadMoviesByKeyWord();
-  } else {
-    await onLoading();
-  }
-
+  await checkLocation();
   scrollToTop();
 
   const nextPagination = totalPages - api.page;
@@ -140,13 +157,7 @@ async function onNumberClick(e) {
     api.page = pageNum;
     isFirstPage();
     isLastPage();
-
-    if (inputValue) {
-      await loadMoviesByKeyWord();
-    } else {
-      await onLoading();
-    }
-
+    await checkLocation();
     scrollToTop();
 
     const nextPagination = totalPages - api.page;
@@ -421,8 +432,6 @@ function scrollToTop() {
 //Перевірка на кількість сторінок, залежно від кількості відобразиться 5 чи менше
 function renderPagination() {
   showButtons();
-  isFirstPage();
-  isLastPage();
   listFirstPage = 1;
   totalPages = storage.get('totalPages');
 
@@ -438,9 +447,13 @@ function renderPagination() {
 
   if (totalPages <= 5) {
     createList(listFirstPage, totalPages);
+    isFirstPage();
+    isLastPage();
   } else {
     createList(listFirstPage, 5);
+    isFirstPage();
+    isLastPage();
   }
 }
 
-export { renderPagination };
+export { renderPagination, getItems };

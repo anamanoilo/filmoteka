@@ -1,5 +1,5 @@
 import { onLoading, makeMovieList } from '../services/movieList';
-import { renderPagination } from './pagination';
+import { renderPagination, getItems } from './pagination';
 import api from '../services/ApiService';
 import * as storage from '../services/localStorage';
 
@@ -27,27 +27,27 @@ async function onHome() {
   await onLoading();
   renderPagination();
   refs.queueBtn.classList.remove('is-active');
-  refs.watchedBtn.classList.add('is-active');
+  refs.watchedBtn.classList.remove('is-active');
 }
 async function onLibrary() {
+  refs.watchedBtn.classList.add('is-active');
   refs.header.classList.add('library');
   refs.search.classList.add('visually-hidden');
   refs.libraryBtn.classList.remove('visually-hidden');
   refs.home.classList.remove('current');
   refs.library.classList.add('current');
   api.resetPage();
-  await onLoading();
-  renderPagination();
   onWatchedBtn();
 }
 async function onWatchedBtn() {
   refs.spinner.classList.remove('visually-hidden');
   refs.watchedBtn.classList.add('is-active');
   refs.queueBtn.classList.remove('is-active');
+  api.resetPage();
   const watchedMovies = storage.get('watched');
   const totalPages = Math.ceil(watchedMovies.length / 20);
   storage.save('totalPages', totalPages);
-  await makeMovieList(watchedMovies);
+  await getItems('watched');
   renderPagination();
   refs.spinner.classList.add('visually-hidden');
 }
@@ -55,10 +55,11 @@ async function onQueueBtn() {
   refs.spinner.classList.remove('visually-hidden');
   refs.watchedBtn.classList.remove('is-active');
   refs.queueBtn.classList.add('is-active');
+  api.resetPage();
   const queueMovies = storage.get('queue');
   const totalPages = Math.ceil(queueMovies.length / 20);
   storage.save('totalPages', totalPages);
-  await makeMovieList(queueMovies);
+  await getItems('queue');
   renderPagination();
   refs.spinner.classList.add('visually-hidden');
 }
