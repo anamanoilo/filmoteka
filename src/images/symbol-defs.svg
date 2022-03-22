@@ -51,6 +51,14 @@
 <symbol id="icon-arrow-right" viewBox="0 0 32 32">
 <path d="M19.414 27.414l10-10c0.781-0.781 0.781-2.047 0-2.828l-10-10c-0.781-0.781-2.047-0.781-2.828 0s-0.781 2.047 0 2.828l6.586 6.586h-19.172c-1.105 0-2 0.895-2 2s0.895 2 2 2h19.172l-6.586 6.586c-0.39 0.39-0.586 0.902-0.586 1.414s0.195 1.024 0.586 1.414c0.781 0.781 2.047 0.781 2.828 0z"></path>
 </symbol>
+<!-- Scroll to top button -->
+   <symbol id="icon-arrow-up" viewBox="0 0 32 32">
+<path d="M16 1l-15 15h9v16h12v-16h9z"></path>
+</symbol>
+<!-- Scroll to bottom button -->
+   <symbol id="icon-arrow-down" viewBox="0 0 32 32">
+<path d="M16 31l15-15h-9v-16h-12v16h-9z"></path>
+</symbol>
    </defs>
 </svg>
 

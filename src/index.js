@@ -8,3 +8,4 @@ import './js/components/library';
 import './js/services/search';
 import './js/components/modal-movie';
 import './js/services/saveMoviesToLibrary';
+import './js/services/scroll-btn';

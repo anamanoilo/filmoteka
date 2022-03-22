@@ -1,0 +1,58 @@
+.scroll {
+  &__top,
+  &__bottom {
+    display: none;
+    @media screen and (min-width: 420px) {
+      display: block;
+      position: fixed;
+      z-index: 15;
+      right: 20px;
+      bottom: 60px;
+
+      width: 40px;
+      height: 40px;
+      border: transparent;
+      border-radius: 5px;
+      background-color: rgb(109, 106, 106);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      fill: var(--primary-white-color);
+      opacity: 0.7;
+      transition: opacity 250ms linear;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+
+    @include mq(tablet) {
+      bottom: 30%;
+    }
+
+    @include mq(desktop) {
+      right: 50px;
+      bottom: 100px;
+    }
+  }
+
+  &__bottom {
+    right: 20px;
+    bottom: 10px;
+
+    @include mq(tablet) {
+      bottom: 20%;
+    }
+
+    @include mq(desktop) {
+      right: 50px;
+      bottom: 50px;
+    }
+  }
+
+  &__hide {
+    transition: opacity 250ms linear;
+    opacity: 0;
+    pointer-events: none;
+  }
+}

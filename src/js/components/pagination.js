@@ -30,10 +30,7 @@ async function nextPageBtn() {
     await onLoading();
   }
 
-  if (totalPages <= 7) {
-    disableNextRoll();
-    disablePrevRoll();
-  }
+  scrollToTop();
 
   const nextPagination = totalPages - api.page;
 
@@ -44,6 +41,21 @@ async function nextPageBtn() {
 
   if (nextPagination <= 2) {
     createList(totalPages - 4, totalPages);
+    if (totalPages === 6) {
+      disableRoll('[data-get="prev"]');
+      return;
+    }
+
+    if (totalPages === 7) {
+      if (api.page >= 5) {
+        enableRoll('[data-get="prev"]');
+        return;
+      }
+
+      disableRoll('[data-get="next"]');
+      disableRoll('[data-get="prev"]');
+      return;
+    }
     return;
   }
 
@@ -53,6 +65,13 @@ async function nextPageBtn() {
   }
 
   createList(api.page - 2, api.page + 2);
+
+  if (totalPages <= 7) {
+    disableRoll('[data-get="next"]');
+    disableRoll('[data-get="prev"]');
+    return;
+  }
+
   checkPagination();
 }
 
@@ -67,10 +86,7 @@ async function prevPageBtn() {
     await onLoading();
   }
 
-  if (totalPages <= 7) {
-    disableNextRoll();
-    disablePrevRoll();
-  }
+  scrollToTop();
 
   const nextPagination = totalPages - api.page;
 
@@ -86,10 +102,34 @@ async function prevPageBtn() {
 
   if (nextPagination <= 2) {
     createList(totalPages - 4, totalPages);
+
+    if (totalPages === 6) {
+      disableRoll('[data-get="prev"]');
+      return;
+    }
+
+    if (totalPages === 7) {
+      if (api.page >= 5) {
+        enableRoll('[data-get="prev"]');
+        return;
+      }
+
+      disableRoll('[data-get="next"]');
+      disableRoll('[data-get="prev"]');
+      return;
+    }
+
     return;
   }
 
   createList(api.page - 2, api.page + 2);
+
+  if (totalPages <= 7) {
+    disableRoll('[data-get="next"]');
+    disableRoll('[data-get="prev"]');
+    return;
+  }
+
   checkPagination();
 }
 
@@ -107,10 +147,7 @@ async function onNumberClick(e) {
       await onLoading();
     }
 
-    if (totalPages <= 7) {
-      disableNextRoll();
-      disablePrevRoll();
-    }
+    scrollToTop();
 
     const nextPagination = totalPages - api.page;
 
@@ -127,26 +164,50 @@ async function onNumberClick(e) {
 
     if (nextPagination <= 2) {
       createList(totalPages - 4, totalPages);
+
+      if (totalPages === 6) {
+        disableRoll('[data-get="prev"]');
+        return;
+      }
+
+      if (totalPages === 7) {
+        if (api.page >= 5) {
+          enableRoll('[data-get="prev"]');
+          return;
+        }
+
+        disableRoll('[data-get="next"]');
+        disableRoll('[data-get="prev"]');
+        return;
+      }
       return;
     }
 
     createList(api.page - 2, api.page + 2);
+
+    if (totalPages <= 7) {
+      disableRoll('[data-get="next"]');
+      disableRoll('[data-get="prev"]');
+      return;
+    }
+
     checkPagination();
   }
 }
 
 function checkPagination() {
   const allPages = refs.listPagination.querySelectorAll('[data-pagination-link]');
+  let firstElement = Number(allPages[0].textContent);
   let lastElement = Number(allPages[4].textContent);
   let nextRoll = totalPages - lastElement;
 
   if (nextRoll <= 1) {
-    disableNextRoll();
-  } else if (api.page <= 4) {
-    disablePrevRoll();
+    disableRoll('[data-get="next"]');
+  } else if (firstElement <= 2) {
+    disableRoll('[data-get="prev"]');
   } else {
-    enableNextRoll();
-    enablePrevRoll();
+    enableRoll('[data-get="next"]');
+    enableRoll('[data-get="prev"]');
   }
 }
 
@@ -195,6 +256,11 @@ function createList(first, last) {
   refs.listPagination.innerHTML = '';
   refs.listPagination.insertAdjacentHTML('beforeend', markup);
 
+  addListenerToRollBtn();
+  checkPagination();
+}
+
+function addListenerToRollBtn() {
   const getNextPagesRef = refs.listPagination.querySelector('[data-get="next"]');
   const getPrevPagesRef = refs.listPagination.querySelector('[data-get="prev"]');
 
@@ -207,11 +273,6 @@ function createList(first, last) {
     getPrevPagesRef.addEventListener('click', getPrevPages);
     getPrevPagesRef.disabled = false;
   }
-
-  if (totalPages <= 7) {
-    disableNextRoll();
-    disablePrevRoll();
-  }
 }
 
 function getNextPages() {
@@ -220,9 +281,16 @@ function getNextPages() {
   let lastElement = Number(allPages[4].textContent);
   let nextRoll = totalPages - lastElement;
 
-  if (nextRoll <= 5) {
+  if (nextRoll <= 6) {
     rollPages(totalPages - 5, totalPages - 1);
-    disableNextRoll();
+
+    if (totalPages === 7) {
+      disableRoll('[data-get="next"]');
+      disableRoll('[data-get="prev"]');
+      return;
+    }
+
+    checkPagination();
     return;
   }
 
@@ -235,44 +303,35 @@ function getPrevPages() {
   let lastElement = Number(allPages[4].textContent);
   let prevRoll = lastElement - 5;
 
-  if (prevRoll <= 5) {
+  if (prevRoll <= 6) {
     rollPages(listFirstPage + 1, listFirstPage + 5);
-    disablePrevRoll();
+
+    if (totalPages === 7) {
+      disableRoll('[data-get="next"]');
+      disableRoll('[data-get="prev"]');
+      return;
+    }
+
+    checkPagination();
     return;
   }
 
   rollPages(firstElement - 5, firstElement - 1);
 }
 
-function disableNextRoll() {
-  const getNextPagesRef = refs.listPagination.querySelector('[data-get="next"]');
-  if (getNextPagesRef) {
-    getNextPagesRef.disabled = true;
-    getNextPagesRef.classList.add('pagination__disabled');
+function enableRoll(selector) {
+  const enableRollRef = refs.listPagination.querySelector(selector);
+  if (enableRollRef) {
+    enableRollRef.disabled = false;
+    enableRollRef.classList.remove('pagination__disabled');
   }
 }
 
-function enableNextRoll() {
-  const getNextPagesRef = refs.listPagination.querySelector('[data-get="next"]');
-  if (getNextPagesRef) {
-    getNextPagesRef.disabled = false;
-    getNextPagesRef.classList.remove('pagination__disabled');
-  }
-}
-
-function disablePrevRoll() {
-  const getPrevPagesRef = refs.listPagination.querySelector('[data-get="prev"]');
-  if (getPrevPagesRef) {
-    getPrevPagesRef.disabled = true;
-    getPrevPagesRef.classList.add('pagination__disabled');
-  }
-}
-
-function enablePrevRoll() {
-  const getPrevPagesRef = refs.listPagination.querySelector('[data-get="prev"]');
-  if (getPrevPagesRef) {
-    getPrevPagesRef.disabled = false;
-    getPrevPagesRef.classList.remove('pagination__disabled');
+function disableRoll(selector) {
+  const disableRollRef = refs.listPagination.querySelector(selector);
+  if (disableRollRef) {
+    disableRollRef.disabled = true;
+    disableRollRef.classList.add('pagination__disabled');
   }
 }
 
@@ -298,23 +357,7 @@ function rollPages(first, second) {
   refs.listPagination.innerHTML = '';
   refs.listPagination.insertAdjacentHTML('beforeend', markup);
 
-  const getNextPagesRef = refs.listPagination.querySelector('[data-get="next"]');
-  const getPrevPagesRef = refs.listPagination.querySelector('[data-get="prev"]');
-
-  if (getNextPagesRef) {
-    getNextPagesRef.addEventListener('click', getNextPages);
-    getPrevPagesRef.disabled = false;
-  }
-
-  if (getPrevPagesRef) {
-    getPrevPagesRef.addEventListener('click', getPrevPages);
-    getNextPagesRef.disabled = false;
-  }
-
-  if (totalPages <= 7) {
-    disableNextRoll();
-    disablePrevRoll();
-  }
+  addListenerToRollBtn();
 }
 
 function reconfigurePagination(first, last) {
@@ -369,6 +412,10 @@ function showButtons() {
 
 function hideButtons() {
   refs.pagination.classList.add('is-hidden');
+}
+
+function scrollToTop() {
+  refs.list.scrollIntoView({ block: 'start', behavior: 'smooth' });
 }
 
 //Перевірка на кількість сторінок, залежно від кількості відобразиться 5 чи менше
