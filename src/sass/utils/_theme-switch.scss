@@ -6,6 +6,9 @@
   & .pagination__link {
     color: var(--primary-white-color);
   }
+  & .pagination__roll {
+    color: var(--primary-white-color);
+  }
   & .pagination__page {
     color: var(--primary-white-color);
   }
@@ -15,7 +18,8 @@
       color: var(--primary-white-color);
     }
   }
-  & .pagination button {
+  & .pagination__btn-next,
+  & .pagination__btn-prev {
     background-color: rgb(47, 45, 45);
     color: var(--primary-white-color);
   }
