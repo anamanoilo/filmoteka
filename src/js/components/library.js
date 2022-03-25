@@ -1,4 +1,4 @@
-import { onLoading, makeMovieList } from '../services/movieList';
+import { onLoading } from '../services/movieList';
 import { renderPagination, getItems } from './pagination';
 import api from '../services/ApiService';
 import * as storage from '../services/localStorage';
@@ -36,6 +36,7 @@ async function onLibrary() {
   refs.libraryBtn.classList.remove('visually-hidden');
   refs.home.classList.remove('current');
   refs.library.classList.add('current');
+  refs.input.value = '';
   api.resetPage();
   onWatchedBtn();
 }

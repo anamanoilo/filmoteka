@@ -456,4 +456,4 @@ function renderPagination() {
   }
 }
 
-export { renderPagination, getItems };
+export { renderPagination, getItems, isActive };

@@ -53,4 +53,4 @@ async function loadMoviesByKeyWord() {
   }
 }
 
-export { loadMoviesByKeyWord, inputValue };
+export { loadMoviesByKeyWord };
