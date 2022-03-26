@@ -2,7 +2,14 @@ import * as storage from '../services/localStorage';
 import { isActive, getItems } from '../components/pagination';
 
 function saveMovie(storageKey, e) {
-  const arrayOfMovies = storage.get('moviesData');
+  let arrayOfMovies = storage.get('moviesData');
+
+  if (isActive('[data-watched-btn]')) {
+    arrayOfMovies = storage.get('watched') || [];
+  } else if (isActive('[data-queue-btn]')) {
+    arrayOfMovies = storage.get('queue') || [];
+  }
+
   const id = Number(document.querySelector('[data-buttons]').id);
   const object = arrayOfMovies.find(movie => movie.id === id);
   const savedMovies = storage.get(storageKey) || [];

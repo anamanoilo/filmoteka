@@ -45,7 +45,7 @@ async function onWatchedBtn() {
   refs.watchedBtn.classList.add('is-active');
   refs.queueBtn.classList.remove('is-active');
   api.resetPage();
-  const watchedMovies = storage.get('watched');
+  const watchedMovies = storage.get('watched') || [];
   const totalPages = Math.ceil(watchedMovies.length / 20);
   storage.save('totalPages', totalPages);
   await getItems('watched');
@@ -57,7 +57,7 @@ async function onQueueBtn() {
   refs.watchedBtn.classList.remove('is-active');
   refs.queueBtn.classList.add('is-active');
   api.resetPage();
-  const queueMovies = storage.get('queue');
+  const queueMovies = storage.get('queue') || [];
   const totalPages = Math.ceil(queueMovies.length / 20);
   storage.save('totalPages', totalPages);
   await getItems('queue');
