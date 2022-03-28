@@ -1,7 +1,7 @@
 import api from '../services/ApiService';
-import { addToWatched, addToQueue } from '../services/saveMoviesToLibrary';
+import { addToWatched, addToQueue, saveMovie, removeMovie } from '../services/saveMoviesToLibrary';
 import * as storage from '../services/localStorage';
-import { isActive } from './pagination';
+import { isActive, getItems } from './pagination';
 
 const refs = {
   modal: document.querySelector('[data-modal]'),
@@ -10,7 +10,7 @@ const refs = {
   spinner: document.querySelector('.spinner'),
 };
 
-let moviesData = storage.get('moviesData');
+let arrayOfMovies = storage.get('moviesData');
 
 function openModal(e) {
   e.preventDefault();
@@ -19,22 +19,18 @@ function openModal(e) {
   }
 
   if (isActive('[data-watched-btn]')) {
-    moviesData = storage.get('watched');
+    arrayOfMovies = storage.get('watched');
   } else if (isActive('[data-queue-btn]')) {
-    moviesData = storage.get('queue');
+    arrayOfMovies = storage.get('queue');
   } else {
-    moviesData = storage.get('moviesData');
+    arrayOfMovies = storage.get('moviesData');
   }
 
   refs.spinner.classList.remove('visually-hidden');
   refs.modal.classList.add('is-open');
   api.movieId = Number(e.target.closest('li').id);
 
-  refs.modal.addEventListener('click', closeModalByClick);
-  refs.closeBtn.addEventListener('click', closeModalByClickBtn);
-  document.addEventListener('keydown', closeModalByKeyboard);
-
-  const movie = moviesData.find(movie => movie.id === api.movieId);
+  const movie = arrayOfMovies.find(movie => movie.id === api.movieId);
   const {
     poster,
     filmTitle,
@@ -87,6 +83,10 @@ function openModal(e) {
   `;
   refs.innerModal.insertAdjacentHTML('afterbegin', markup);
 
+  refs.modal.addEventListener('click', closeModalByClick);
+  refs.closeBtn.addEventListener('click', closeModalByClickBtn);
+  document.addEventListener('keydown', closeModalByKeyboard);
+
   const watchedRef = document.querySelector('[data-watched]');
   const queueRef = document.querySelector('[data-queue]');
 
@@ -98,36 +98,6 @@ function openModal(e) {
 
   document.body.style.overflow = 'hidden';
   refs.spinner.classList.add('visually-hidden');
-}
-
-function closeModalByClick(e) {
-  if (e.target !== refs.modal) {
-    return;
-  }
-  clearModal();
-}
-
-function closeModalByClickBtn() {
-  clearModal();
-}
-
-function closeModalByKeyboard(e) {
-  if (e.key === 'Escape') {
-    clearModal();
-  }
-}
-
-function clearModal() {
-  document.body.style = '';
-  refs.modal.classList.remove('is-open');
-  removeListener();
-  refs.innerModal.innerHTML = '';
-}
-
-function removeListener() {
-  refs.closeBtn.removeEventListener('click', closeModalByClickBtn);
-  refs.modal.removeEventListener('click', closeModalByClick);
-  document.removeEventListener('keydown', closeModalByKeyboard);
 }
 
 function nameButton(storageKey, btnRef, id) {
@@ -142,6 +112,71 @@ function nameButton(storageKey, btnRef, id) {
     btnRef.textContent = `Add to ${storageKey}`;
     btnRef.classList.add('current-btn');
   }
+}
+
+function closeModalByClick(e) {
+  if (e.target !== refs.modal) {
+    return;
+  }
+  checkBtnOnClose();
+  clearModal();
+}
+
+function closeModalByClickBtn() {
+  checkBtnOnClose();
+  clearModal();
+}
+
+function closeModalByKeyboard(e) {
+  if (e.key === 'Escape') {
+    checkBtnOnClose();
+    clearModal();
+  }
+}
+
+function checkBtnOnClose() {
+  const watchedRef = document.querySelector('[data-watched]');
+  const queueRef = document.querySelector('[data-queue]');
+
+  if (!watchedRef.classList.contains('current-btn')) {
+    saveMovie('watched');
+  } else {
+    removeMovie('watched');
+  }
+
+  if (!queueRef.classList.contains('current-btn')) {
+    saveMovie('queue');
+  } else {
+    removeMovie('queue');
+  }
+
+  const watched = storage.get('watched');
+  const queue = storage.get('queue');
+
+  if (isActive('[data-watched-btn]') && arrayOfMovies.length !== watched.length) {
+    console.log('watched activated');
+    getItems('watched');
+  } else if (isActive('[data-queue-btn]') && arrayOfMovies.length !== queue.length) {
+    console.log('queue activated');
+    getItems('queue');
+  }
+}
+
+function clearModal() {
+  document.body.style = '';
+  refs.modal.classList.remove('is-open');
+  removeListener();
+  refs.innerModal.innerHTML = '';
+}
+
+function removeListener() {
+  const queueRef = document.querySelector('[data-queue]');
+  const watchedRef = document.querySelector('[data-watched]');
+  queueRef.removeEventListener('click', addToQueue);
+  watchedRef.removeEventListener('click', addToWatched);
+  refs.closeBtn.removeEventListener('click', closeModalByClickBtn);
+  refs.modal.removeEventListener('click', closeModalByClick);
+  document.removeEventListener('keydown', closeModalByKeyboard);
 }
 
 export default openModal;
