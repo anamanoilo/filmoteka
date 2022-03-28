@@ -32,6 +32,7 @@ function openModal(e) {
 
   const movie = arrayOfMovies.find(movie => movie.id === api.movieId);
   const {
+    id,
     poster,
     filmTitle,
     rating,
@@ -40,7 +41,6 @@ function openModal(e) {
     original_title,
     genres,
     overview,
-    id,
   } = movie;
 
   const markup = `
@@ -78,8 +78,6 @@ function openModal(e) {
                   add to queue
                 </button>
               </div>
-            
-          
   `;
   refs.innerModal.insertAdjacentHTML('afterbegin', markup);
 
@@ -102,6 +100,7 @@ function openModal(e) {
 
 function nameButton(storageKey, btnRef, id) {
   const savedMovies = storage.get(storageKey) || [];
+  console.log('🚀 ~ savedMovies', savedMovies);
 
   for (const movie of savedMovies) {
     if (movie.id === id) {

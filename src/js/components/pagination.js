@@ -30,6 +30,11 @@ function isActive(selector) {
 
 function getItems(element) {
   const queueItems = storage.get(element);
+
+  if (queueItems === null) {
+    return;
+  }
+
   let start = (api.page - 1) * itemsPerPage;
   let end = start + itemsPerPage;
   let items = queueItems.slice(start, end);
