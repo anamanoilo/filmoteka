@@ -407,13 +407,13 @@ function createAdditionalPage(i) {
 
 function createAdditionalActive(i) {
   return `<li class="pagination__item">
-          <span class="pagination__page pagination__active" href="#">${i}</span>
+          <span class="pagination__page pagination__active">${i}</span>
         </li>`;
 }
 
 function createCurrentPage(i) {
   return `<li class="pagination__item">
-          <span class="pagination__link pagination__active" href="#" data-pagination-link>${i}</span>
+          <span class="pagination__link pagination__active" data-pagination-link>${i}</span>
         </li>`;
 }
 
