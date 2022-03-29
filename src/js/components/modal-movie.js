@@ -100,7 +100,6 @@ function openModal(e) {
 
 function nameButton(storageKey, btnRef, id) {
   const savedMovies = storage.get(storageKey) || [];
-  console.log('🚀 ~ savedMovies', savedMovies);
 
   for (const movie of savedMovies) {
     if (movie.id === id) {
@@ -153,10 +152,8 @@ function checkBtnOnClose() {
   const queue = storage.get('queue');
 
   if (isActive('[data-watched-btn]') && arrayOfMovies.length !== watched.length) {
-    console.log('watched activated');
     getItems('watched');
   } else if (isActive('[data-queue-btn]') && arrayOfMovies.length !== queue.length) {
-    console.log('queue activated');
     getItems('queue');
   }
 }
