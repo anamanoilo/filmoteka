@@ -93,7 +93,7 @@ function makeMovieList(array) {
   refs.list.insertAdjacentHTML('beforeend', markup);
 }
 
-function renderCard({ id, filmTitle, poster, genres, year, rating }) {
+function renderCard({ filmTitle, poster, genres, year, rating, id }) {
   return ` <li id='${id}' class="movies__item">
       <a href="" class="movies__link">
         <img class="movies__img" src="${poster}" alt="${filmTitle}">

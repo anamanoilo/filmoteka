@@ -30,6 +30,11 @@ function isActive(selector) {
 
 function getItems(element) {
   const queueItems = storage.get(element);
+
+  if (queueItems === null) {
+    return;
+  }
+
   let start = (api.page - 1) * itemsPerPage;
   let end = start + itemsPerPage;
   let items = queueItems.slice(start, end);
@@ -407,13 +412,13 @@ function createAdditionalPage(i) {
 
 function createAdditionalActive(i) {
   return `<li class="pagination__item">
-          <span class="pagination__page pagination__active" href="#">${i}</span>
+          <span class="pagination__page pagination__active">${i}</span>
         </li>`;
 }
 
 function createCurrentPage(i) {
   return `<li class="pagination__item">
-          <span class="pagination__link pagination__active" href="#" data-pagination-link>${i}</span>
+          <span class="pagination__link pagination__active" data-pagination-link>${i}</span>
         </li>`;
 }
 
@@ -456,4 +461,4 @@ function renderPagination() {
   }
 }
 
-export { renderPagination, getItems };
+export { renderPagination, getItems, isActive };
